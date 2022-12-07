@@ -153,3 +153,5 @@ if __name__ == '__main__':
         except TypeError:
             print(f'НЕВЕРНЫЕ ДАННЫЕ (Проверьте введенные'
                   f' данные {workout_type})')
+        except ValueError:
+            print('Такой тренировки не существует.')
