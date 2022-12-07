@@ -1,4 +1,4 @@
-from typing import List
+from typing import Type, List, Dict
 
 
 class InfoMessage:
@@ -121,7 +121,7 @@ class Swimming(Training):
                 * self.weight * self.duration)
 
 
-TYPES_TRAINING: dict[str, type[Training]] = {'SWM': Swimming,
+TYPES_TRAINING: Dict[str, Type[Training]] = {'SWM': Swimming,
                                              'RUN': Running,
                                              'WLK': SportsWalking}
 
