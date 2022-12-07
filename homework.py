@@ -1,3 +1,6 @@
+from typing import List
+
+
 class InfoMessage:
     """Информационное сообщение о тренировке."""
     def __init__(self,
@@ -44,7 +47,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError('Ты потерял тренировку=)')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -94,8 +97,8 @@ class SportsWalking(Training):
 class Swimming(Training):
     """Тренировка: плавание."""
     LEN_STEP: float = 1.38
-    CONST: float = 1.1
-    CONST2 = 2
+    CALORIES_MEAN_SPEED: float = 1.1
+    CALORIES_WEIGHT_MULTIPILER = 2
 
     def __init__(self,
                  action: int,
@@ -113,16 +116,19 @@ class Swimming(Training):
                 / self.M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
-        return (self.get_mean_speed()
-                + self.CONST) * self.CONST2 * self.weight * self.duration
+        return ((self.get_mean_speed()
+                + self.CALORIES_MEAN_SPEED) * self.CALORIES_WEIGHT_MULTIPILER
+                * self.weight * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+TYPES_TRAINING: dict[str, type[Training]] = {'SWM': Swimming,
+                                             'RUN': Running,
+                                             'WLK': SportsWalking}
+
+
+def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    types_trainings: dict[str, type[Training]] = {'SWM': Swimming,
-                                                  'RUN': Running,
-                                                  'WLK': SportsWalking}
-    return types_trainings[workout_type](*data)
+    return TYPES_TRAINING[workout_type](*data)
 
 
 def main(training: Training) -> None:
@@ -133,11 +139,17 @@ def main(training: Training) -> None:
 
 if __name__ == '__main__':
     packages = [
-        ('SWM', [720, 1, 80, 25, 40]),
+        ('SWM', [720, 1, 1, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
     ]
 
     for workout_type, data in packages:
-        training = read_package(workout_type, data)
-        main(training)
+        try:
+            training = read_package(workout_type, data)
+            main(training)
+        except KeyError:
+            print('НЕВЕРНЫЕ ДАННЫЕ (введите тип тренировки)')
+        except TypeError:
+            print(f'НЕВЕРНЫЕ ДАННЫЕ (Проверьте введенные'
+                  f' данные {workout_type})')
