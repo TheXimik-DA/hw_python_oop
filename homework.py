@@ -2,7 +2,6 @@ from typing import Type, List, Dict
 
 
 class InfoMessage:
-    """Информационное сообщение о тренировке."""
     def __init__(self,
                  training_type: str,
                  duration: float,
@@ -24,7 +23,6 @@ class InfoMessage:
 
 
 class Training:
-    """Базовый класс тренировки."""
     M_IN_KM = 1000
     LEN_STEP: float = 0.65
     MIN_IN_H = 60
@@ -60,7 +58,6 @@ class Training:
 
 
 class Running(Training):
-    """Тренировка: бег."""
     CALORIES_MEAN_SPEED_MULTIPLIER = 18
     CALORIES_MEAN_SPEED_SHIFT = 1.79
 
@@ -72,7 +69,6 @@ class Running(Training):
 
 
 class SportsWalking(Training):
-    """Тренировка: спортивная ходьба."""
     CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
     CALORIES_WEIGHT_MULTIPLIER = 0.035
     KMH_IN_MSEC: float = round(1000 / 3600, 3)
@@ -95,7 +91,6 @@ class SportsWalking(Training):
 
 
 class Swimming(Training):
-    """Тренировка: плавание."""
     LEN_STEP: float = 1.38
     CALORIES_MEAN_SPEED: float = 1.1
     CALORIES_WEIGHT_MULTIPILER = 2
@@ -111,7 +106,6 @@ class Swimming(Training):
         self.count_pool = count_pool
 
     def get_mean_speed(self) -> float:
-        """Получить среднюю скорость движения."""
         return (self.length_pool * self.count_pool
                 / self.M_IN_KM / self.duration)
 
@@ -128,11 +122,15 @@ TYPES_TRAINING: Dict[str, Type[Training]] = {'SWM': Swimming,
 
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    return TYPES_TRAINING[workout_type](*data)
+    try:
+        return TYPES_TRAINING[workout_type](*data)
+    except KeyError:
+        raise ('НЕВЕРНЫЕ ДАННЫЕ (Введите тип тренировки)')
+    except TypeError:
+        raise ('НЕВЕРНЫЕ ДАННЫЕ (Введите полные данные')
 
 
 def main(training: Training) -> None:
-    """Главная функция."""
     info = training.show_training_info()
     print(info.get_message())
 
@@ -145,13 +143,5 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        try:
-            training = read_package(workout_type, data)
-            main(training)
-        except KeyError:
-            print('НЕВЕРНЫЕ ДАННЫЕ (введите тип тренировки)')
-        except TypeError:
-            print(f'НЕВЕРНЫЕ ДАННЫЕ (Проверьте введенные'
-                  f' данные {workout_type})')
-        except ValueError:
-            print('Такой тренировки не существует.')
+        training = read_package(workout_type, data)
+        main(training)
