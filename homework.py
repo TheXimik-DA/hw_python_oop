@@ -127,7 +127,7 @@ def read_package(workout_type: str, data: List[int]) -> Training:
     except KeyError:
         raise ('НЕВЕРНЫЕ ДАННЫЕ (Введите тип тренировки)')
     except TypeError:
-        raise ('НЕВЕРНЫЕ ДАННЫЕ (Введите полные данные')
+        raise ('НЕВЕРНЫЕ ДАННЫЕ (Введите полные данные)')
 
 
 def main(training: Training) -> None:
